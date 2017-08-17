@@ -1,9 +1,0 @@
-import { Directive, ViewContainerRef } from '@angular/core';
-
-@Directive({
-  selector: '[header]',
-})
-export class HeaderDirective {
-  constructor(public viewContainerRef: ViewContainerRef) { }
-}
-
