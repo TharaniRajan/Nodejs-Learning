@@ -3,7 +3,7 @@ var app = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var employeeController = require('./app/Controller/EmployeeController');
-mongoose.connect('mongodb://localhost:27017/TEST');
+mongoose.connect('mongodb://localhost:27017/GPS');
 mongoose.connection.once('connected', function() {
 	console.log("Connected to database");
 });
@@ -18,6 +18,7 @@ app.use(function(req, res, next) {
 app.use(express.static(__dirname + '/dist'));
 
 app.get('/', function (req, res) {
+    res.send('Tesing with jasmine!');
      // load our public/index.html file
     res.sendfile('./dist/index.html');
 });
@@ -27,7 +28,7 @@ var port = process.env.PORT || 3000;
 app.use('/api', router);
 router.route('/employee')
     .post(employeeController.EmployeePost)
-    .get(employeeController.getEmployee)
+  .get(employeeController.getEmployee)
     .put(employeeController.putEmployee);
 router.route('/employee/:id')   
     .delete(employeeController.deleteEmployee)
