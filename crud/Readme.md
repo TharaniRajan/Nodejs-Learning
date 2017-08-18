@@ -15,7 +15,9 @@ To run Angular4 client:
 To start client:
 >npm start
 
+the browser opens at:http://localhost:4200/
 
 To Run The Test Cases for client:
->ng test
+>npm test
 
+the browser opens at:http://localhost:9876/ with the Debug Screen

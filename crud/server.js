@@ -3,7 +3,7 @@ var app = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var employeeController = require('./app/Controller/EmployeeController');
-mongoose.connect('mongodb://localhost:27017/GPS');
+mongoose.connect('mongodb://localhost:27017/TEST');
 mongoose.connection.once('connected', function() {
 	console.log("Connected to database");
 });
