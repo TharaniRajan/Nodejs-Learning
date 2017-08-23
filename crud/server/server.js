@@ -1,36 +1,42 @@
-﻿var express = require('express');        // call express
-var app = express();                 // define our app using express
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var employeeController = require('./app/Controller/EmployeeController');
-mongoose.connect('mongodb://localhost:27017/GPS');
-mongoose.connection.once('connected', function() {
-	console.log("Connected to database");
-});
+'use strict';
+
+const express = require('express'),
+ app = express(),
+ port = process.env.PORT || 3000,
+ mongoose = require('mongoose'),
+ Employee = require('./app/models/employeeListModel'),
+ Admin = require('./app/models/adminModel'),
+ bodyParser = require('body-parser'),
+ jsonwebtoken = require("jsonwebtoken");
+const database = require('./config/database');      // load the database config
+
+mongoose.Promise = global.Promise;
+mongoose.connect(database.localUrl);
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+  if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
+    jsonwebtoken.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
+      if (err) req.user = undefined;
+      req.user = decode;
+      next();
+    });
+  } else {
+    req.user = undefined;
+    next();
+  }
+});
+const routes = require('./app/routes/employeeListRoutes');
+routes(app);
+
+app.use(function(req, res) {
+  res.status(404).send({ url: req.originalUrl + ' not found' })
 });
 
-app.use(express.static(__dirname + '/dist'));
-
-app.get('/', function (req, res) {
-    res.send('Tesing with jasmine!');
-     // load our public/index.html file
-    res.sendfile('./dist/index.html');
-});
-var router = express.Router();
-var port = process.env.PORT || 3000;       
-
-app.use('/api', router);
-router.route('/employee')
-    .post(employeeController.EmployeePost)
-  .get(employeeController.getEmployee)
-    .put(employeeController.putEmployee);
-router.route('/employee/:id')   
-    .delete(employeeController.deleteEmployee)
-    .get(employeeController.getEmployeeById);
 app.listen(port);
+
+console.log('express server started on: ' + port);
+
+module.exports = app;
